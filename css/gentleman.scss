@@ -1,0 +1,54 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: radial-gradient(white, #b49292);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#canvas {
+  display: block;
+  background-repeat: no-repeat;
+  background-size: auto 800px;
+  background-position: center top;
+  height: 800px;
+  max-width: 1000px;
+}
+
+div {
+  text-align: center;
+}
+
+.instruction {
+  padding-bottom: 20px;
+
+  div:nth-of-type(1) {
+    font-size: 2em;
+    line-height: 2em;
+  }
+
+  div:not(:nth-of-type(1)) {
+    font-size: 0.8em;
+  }
+}
+
+.desc {
+  border: solid 3px;
+  padding: 40px;
+  margin: 30px;
+  font-size: 3em;
+  border-radius: 30px;
+
+  a {
+    text-decoration: none;
+  }
+}
+
+.footer {
+  margin: 20px;
+  font-size: 12px;
+}
