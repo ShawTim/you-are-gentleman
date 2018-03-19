@@ -2,11 +2,13 @@ import { Cloth, mouse } from "./cloth";
 import asukakiraran01 from "./asukakiraran01";
 import asukakiraran02 from "./asukakiraran02";
 import songjoongki01 from "./songjoongki01";
+import kimwoobin01 from "./kimwoobin01";
 
 const models = {
   asukakiraran01,
   asukakiraran02,
   songjoongki01,
+  kimwoobin01,
 };
 
 let cloth = null;
@@ -15,8 +17,12 @@ const setMouse = (e, canvas) => {
   const rect = canvas.getBoundingClientRect();
   mouse.px = mouse.x;
   mouse.py = mouse.y;
-  mouse.x = e.clientX - rect.left;
-  mouse.y = e.clientY - rect.top;
+
+  try {
+    mouse.x = (e.clientX || e.touches[0].pageX) - rect.left;
+    mouse.y = (e.clientY || e.touches[0].pageY) - rect.top;
+  } catch (e) {
+  }
 };
 
 const selectModel = (model) => {
@@ -26,6 +32,7 @@ const selectModel = (model) => {
 
   canvas = document.createElement("canvas");
   canvas.setAttribute("id", "canvas");
+  canvas.setAttribute("tabIndex", "0");
   container.appendChild(canvas);
   initCanvas(canvas, model);
 
@@ -47,8 +54,7 @@ const initModels = (picker) => {
       e.target.classList.add("selected");
       selectModel(models[e.target.getAttribute("data-model")]);
     }
-    if (model === 'songjoongki01') {
-    //if (!i) {
+    if (!i) {
       img.classList.add("selected");
       selectModel(models[model]);
     }
@@ -62,14 +68,19 @@ const initCanvas = (canvas, options) => {
   canvas.height = options.height;
   canvas.style.backgroundImage = `url(./images/${options.image})`;
 
-  canvas.onmousedown = (e) => {
+  const mousedown = (e) => {
     mouse.button = e.which;
     mouse.down = true;
     setMouse(e, canvas);
-  }
-  canvas.onmousemove = (e) => setMouse(e, canvas);
-  canvas.onmouseup = () => (mouse.down = false);
-  canvas.onmouseout = () => (mouse.down = false);
+  };
+  canvas.addEventListener("mousedown", mousedown);
+  canvas.addEventListener("touchstart", mousedown);
+  canvas.addEventListener("mousemove", (e) => setMouse(e, canvas));
+  canvas.addEventListener("touchmove", (e) => setMouse(e, canvas));
+  canvas.addEventListener("mouseup", () => (mouse.down = false));
+  canvas.addEventListener("mouseout", () => (mouse.down = false));
+  canvas.addEventListener("touchend", () => (mouse.down = false));
+  canvas.addEventListener("touchcancel", () => (mouse.down = false));
   canvas.oncontextmenu = (e) => e.preventDefault();
 };
 
