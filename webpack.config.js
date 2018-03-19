@@ -13,6 +13,7 @@ module.exports = {
       { from: '*.png' },
       { from: '*.jpg' },
       { from: './images/*.jpg' },
+      { from: './images/*.png' },
     ])
   ],
   module: {

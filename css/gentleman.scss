@@ -48,6 +48,16 @@ div {
   }
 }
 
+.model-picker {
+  display: flex;
+
+  img {
+    height: 150px;
+    margin: 10px;
+    cursor: pointer;
+  }
+}
+
 .footer {
   margin: 20px;
   font-size: 12px;

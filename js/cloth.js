@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+const getSetting = (setting) => _.isFunction(setting) ? setting() : setting;
+
 export const settings = {
   color: "black",
   accuracy: 5,
@@ -38,6 +40,7 @@ export class Point {
     this.attached = [];
 
     this.canvas = canvas;
+    this.color = getSetting(settings.color);
   }
 
   update(delta) {
@@ -108,8 +111,8 @@ export class Point {
 
     const ctx = this.canvas.getContext("2d");
     area.forEach((a) => {
-      ctx.fillStyle = settings.color;
-      ctx.strokeStyle = settings.color;
+      ctx.fillStyle = this.color;
+      ctx.strokeStyle = this.color;
       ctx.beginPath();
       ctx.moveTo(a.p4.x, a.p4.y);
       ctx.lineTo(a.p1.x, a.p1.y);
@@ -143,8 +146,8 @@ export class Point {
 
   addForce(force) {
     const [x, y] = force;
-    this.vx += _.isFunction(x) ? x() : x;
-    this.vy += _.isFunction(y) ? y() : y;
+    this.vx += getSetting(x);
+    this.vy += getSetting(y);
   }
 
   pin(pinx, piny) {
@@ -191,7 +194,7 @@ export class Constraint {
 
   draw() {
     const ctx = this.canvas.getContext("2d");
-    ctx.strokeStyle = settings.color;
+    ctx.strokeStyle = getSetting(settings.color);
     ctx.moveTo(this.p1.x, this.p1.y);
     ctx.lineTo(this.p2.x, this.p2.y);
   }
@@ -202,7 +205,7 @@ export class Cloth {
     this.points = [];
     this.canvas = canvas;
 
-    _.merge(settings, options);
+    _.assign(settings, options);
 
     const clothes = settings.points;
     const pointss = [];
@@ -212,7 +215,7 @@ export class Cloth {
       const row = clothes[y];
       let base = 0;
       row.forEach((r) => {
-        if (r) {
+        if (r >= 1 || r < 0) {
           for (let x = 0; x <= Math.abs(r); x++) {
             const point = new Point(settings.startX + (base+x) * settings.spacing, settings.startY + y * settings.spacing, canvas);
             (r > 0) && point.pin(point.x, point.y);
@@ -221,8 +224,10 @@ export class Cloth {
           }
           base += Math.abs(r);
         } else {
-          points.push(null);
-          base++;
+          for (let x=0; x < parseInt(r*1000); x++) {
+            points.push(null);
+            base++;
+          }
         }
       });
       pointss.push(points);
@@ -254,7 +259,12 @@ export class Cloth {
     this.points.forEach((point) => {
       point.update(delta * delta).draw();
     });
-    ctx.strokeStyle = settings.color;
+    ctx.strokeStyle = getSetting(settings.color);
     ctx.stroke();
+  }
+
+  destroy() {
+    this.points = null;
+    this.canvas = null;
   }
 }
